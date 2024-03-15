@@ -1,4 +1,4 @@
-import { _apiBase, _apiKey } from "../constants";
+import { _apiBase, _apiKey, _baseOffset } from "../constants";
 
 class ApiMarvel {
     getResource = async (url) => {
@@ -11,8 +11,8 @@ class ApiMarvel {
         return await res.json();
     }
 
-    getAllCharacters = async () => {
-        const res = await this.getResource(`${_apiBase}characters?limit=9&offset=111&${_apiKey}`);
+    getAllCharacters = async (offset = _baseOffset) => {
+        const res = await this.getResource(`${_apiBase}characters?limit=9&offset=${offset}&${_apiKey}`);
         return res.data.results.map(this._transformCharacter);
     }
 
