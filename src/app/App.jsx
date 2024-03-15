@@ -3,6 +3,7 @@ import Header from "../components/header"
 import RandomCharacter from "../features/randomCharacter"
 import CharacterList from "../components/characterList"
 import CharacterInfo from "../components/characterInfo"
+import ErrorBoundary from "../shared/errorBoundary";
 
 class App extends Component {
 
@@ -19,10 +20,16 @@ class App extends Component {
             <div className="app">
                 <Header/>
                 <main>
-                    <RandomCharacter/>
+                    <ErrorBoundary>
+                        <RandomCharacter/>
+                    </ErrorBoundary>
                     <div className="char__content">
-                        <CharacterList onCharSelected={this.onCharSelected}/>
-                        <CharacterInfo charId={this.state.selectedChar}/>
+                        <ErrorBoundary>
+                            <CharacterList onCharSelected={this.onCharSelected}/>
+                        </ErrorBoundary>
+                        <ErrorBoundary>
+                            <CharacterInfo charId={this.state.selectedChar}/>
+                        </ErrorBoundary>
                     </div>
                 </main>
             </div>

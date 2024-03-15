@@ -15,7 +15,6 @@ class RandomCharacter extends Component {
     }
     componentDidMount() {
         this.updateCharacter()
-        console.log('Mounted');
     }
 
     apiMarvel = new ApiMarvel();
@@ -32,6 +31,7 @@ class RandomCharacter extends Component {
     
 
     updateCharacter = () => {
+        
         const id = Math.floor(Math.random() * (1011400 - 1011333) + 1011000);
         this.onItemLoading();
         this.apiMarvel
