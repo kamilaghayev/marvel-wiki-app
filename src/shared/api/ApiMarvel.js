@@ -12,7 +12,7 @@ class ApiMarvel {
     }
 
     getAllCharacters = async () => {
-        const res = await this.getResource(`${_apiBase}characters?${_apiKey}`);
+        const res = await this.getResource(`${_apiBase}characters?limit=9&offset=111&${_apiKey}`);
         return res.data.results.map(this._transformCharacter);
     }
 
@@ -23,19 +23,24 @@ class ApiMarvel {
 
     _transformCharacter = (character) => {
         return {
+            id: character.id,
             name: character.name,
-            description: character.description ? this.textSlice(character.description, 210) : "There is no description for this character",
+            description: character.description ? this.mySlice(character.description, 210) : "There is no description for this character",
             thumbnail: `${character.thumbnail.path}.${character.thumbnail.extension}`,
             homepage: character.urls[0].url,
-            wiki: character.urls[1].url
+            wiki: character.urls[1].url,
+            comics: character.comics.items
         }
     }
     
-    textSlice = (text, num) => {
-        if (text.length >= num) {
-            return `${text.slice(0, num)}...`;
+    mySlice = (input, num) => {
+        if (typeof input !== "string") {
+            return input.slice(0, num)
         }
-        return text;
+        if (input.length >= num) {
+            return `${input.slice(0, num)}...`;
+        }
+        return input;
     }
 }
 

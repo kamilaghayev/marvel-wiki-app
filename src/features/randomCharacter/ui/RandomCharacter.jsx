@@ -7,19 +7,22 @@ import RandomCharView from '../../../components/randomCharView';
 import ErrorMessage from '../../../shared/ui/errorMessage';
 
 class RandomCharacter extends Component {
-    constructor(props) {
-        super(props);
-        this.updateCharacter()
-    }
+    
     state = {
         char: {},
         loading: true,
         error: false
     }
+    componentDidMount() {
+        this.updateCharacter()
+        console.log('Mounted');
+    }
+
     apiMarvel = new ApiMarvel();
 
-    onItemLoading = () => this.setState(({loading}) => ({loading: true}))
-    onItemLoaded = () => this.setState(({loading}) => ({loading: false}))
+    onItemLoading = () => this.setState(({loading}) => ({loading: true}));
+    onItemLoaded = () => this.setState(({loading}) => ({loading: false}));
+
     onCharLoaded = (char) => {
         this.setState({
             char,
@@ -27,6 +30,7 @@ class RandomCharacter extends Component {
         })
     }
     
+
     updateCharacter = () => {
         const id = Math.floor(Math.random() * (1011400 - 1011333) + 1011000);
         this.onItemLoading();
