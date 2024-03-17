@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import ApiMarvel from '../../../shared/api/ApiMarvel';
+import useApiMarvel from '../../../shared/api/ApiMarvel';
 import CharacterInfoView from '../../characterInfoView';
 import Skeleton from '../../skeleton';
 
@@ -9,45 +9,23 @@ import './characterInfo.scss';
 
 const CharacterInfo = ({charId}) => {
     
-    const [ state, setState ] = useState({
-        char: null,
-        loading: false,
-        error: false
-    })
-
-    const apiMarvel = new ApiMarvel();
+    const [ char, setChar ] = useState(null)
+    const {loading, error, clearError, getCharacter} = useApiMarvel();
     
 
-    const onCharReUpdated = () => {
-        setState(prevstate => ({
-            ...prevstate,
-            loading: true
-        }))
-    }
 
-    const onCharLoaded = (char) => {
-        setState(prevstate => ({
-            ...prevstate,
-            char,
-            loading: false
-        }))
-    }
-    const onError = () => {
-        setState(prevstate =>({
-            ...prevstate,
-            error: true
-        }))
+    const onCharLoaded = (character) => {
+        setChar(character)
     }
 
 
     const updateChar = () => {
         if (!charId)  return;
         
-        onCharReUpdated();
-
-        apiMarvel.getCharacter(charId)
+        clearError()
+        
+        getCharacter(charId)
             .then(onCharLoaded)
-            .catch(onError)
     }
 
     useEffect(() => {
@@ -56,7 +34,6 @@ const CharacterInfo = ({charId}) => {
     }, [charId]);
 
 
-    const {char, error, loading} = state;
 
     const skeleton = char || error || loading ? null :  <Skeleton/>;
     const errorMessage = error ? <ErrorMessage/> : null;

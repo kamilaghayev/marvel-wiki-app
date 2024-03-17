@@ -1,31 +1,24 @@
 import { _apiBase, _apiKey, _baseOffset } from "../constants";
+import { useHttp } from "../hooks/http.hook";
 
-class ApiMarvel {
-    getResource = async (url) => {
-        let res = await fetch(url);
+const useApiMarvel = () => {
+    const {loading, error, request, clearError} = useHttp();
 
-        if (!res.ok) {
-            throw new Error("Error is respone")
-        }
-
-        return await res.json();
+    const getAllCharacters = async (offset = _baseOffset) => {
+        const res = await request(`${_apiBase}characters?limit=9&offset=${offset}&${_apiKey}`);
+        return res.data.results.map(_transformCharacter);
     }
 
-    getAllCharacters = async (offset = _baseOffset) => {
-        const res = await this.getResource(`${_apiBase}characters?limit=9&offset=${offset}&${_apiKey}`);
-        return res.data.results.map(this._transformCharacter);
+    const getCharacter = async (id) => {
+        const res = await request(`${_apiBase}characters/${id}?${_apiKey}`);
+        return _transformCharacter(res.data.results[0]);
     }
 
-    getCharacter = async (id) => {
-        const res = await this.getResource(`${_apiBase}characters/${id}?${_apiKey}`);
-        return this._transformCharacter(res.data.results[0]);
-    }
-
-    _transformCharacter = (character) => {
+    const _transformCharacter = (character) => {
         return {
             id: character.id,
             name: character.name,
-            description: character.description ? this.mySlice(character.description, 210) : "There is no description for this character",
+            description: character.description ? mySlice(character.description, 210) : "There is no description for this character", // Corrected: Removed "this."
             thumbnail: `${character.thumbnail.path}.${character.thumbnail.extension}`,
             homepage: character.urls[0].url,
             wiki: character.urls[1].url,
@@ -33,7 +26,7 @@ class ApiMarvel {
         }
     }
     
-    mySlice = (input, num) => {
+    const mySlice = (input, num) => {
         if (typeof input !== "string") {
             return input.slice(0, num)
         }
@@ -42,6 +35,8 @@ class ApiMarvel {
         }
         return input;
     }
+
+    return {loading, error, clearError, getAllCharacters, getCharacter, mySlice}
 }
 
-export default ApiMarvel;
+export default useApiMarvel;

@@ -9,7 +9,7 @@ const App = () => {
     const [selectedChar, setState] = useState(null)
 
     const onCharSelected = (id) => {
-        setState(selectedChar = id)
+        setState(prevstate => prevstate = id)
     }
 
     return (
