@@ -1,93 +1,104 @@
-import { Component } from 'react';
 import './characterList.scss';
 import ApiMarvel from '../../../shared/api/ApiMarvel';
 import CharacterItem from '../../characterItem';
 import Spinner from '../../../shared/ui/spinner';
 import ErrorMessage from '../../../shared/ui/errorMessage';
 import { _baseOffset } from '../../../shared/constants';
+import { useEffect, useState } from 'react';
 
-class CharacterList extends Component {
+const FirstState = {
+    charList: [],
+    loading: true,
+    error: false,
+    newItemLoading: false,
+    offset: _baseOffset,
+    charListEnded: false
+}
+
+const CharacterList = ({onCharSelected}) => {
+    const [state, setState] = useState(FirstState)
     
-    state = {
-        charList: [],
-        loading: true,
-        error: false,
-        newItemLoading: false,
-        offset: _baseOffset,
-        charListEnded: false
-    }
+    const apiMarvel = new ApiMarvel();
     
-    componentDidMount() {
-        this.onRequest();
-    }
-
-    apiMarvel = new ApiMarvel();
-
-    onRequest = (offset) => {
-        this.onCharListLoading();
-
-        this.apiMarvel.getAllCharacters(offset)
-            .then(this.onUpdatedCharList)
-            .catch(err => this.onError())
-    }
-    
-    onUpdatedCharList = (newCharList) => {
+    const onUpdatedCharList = (newCharList) => {
         if(newCharList.length < 9) {
-            this.setState({charListEnded: true})
+            setState(prevstate=>({...prevstate,charListEnded: true}))
         }
-        this.setState(({charList, offset}) =>({
-            charList: [...charList, ...newCharList],
+        setState(prevstate =>({
+            ...prevstate,
+            charList: [...prevstate.charList, ...newCharList],
             loading: false,
             newItemLoading: false,
-            offset: offset + 9
+            offset: prevstate.offset + 9
         }))
     }
 
-    onCharListLoading = () => {
-        this.setState({
+    const onCharListLoading = () => {
+        setState(prevstate => ({
+            ...prevstate,
             newItemLoading: true
-        })
+        }))
     }
-    onError = () => {
-        this.setState({error: true})
+    const onError = () => {
+        this.setState(prevstate =>({...prevstate, error: true}))
     }
 
-    renderContent = (loading, charList) => {
+    const renderContent = (loading, charList) => {
         if (loading) {
             return <Spinner />;
         } else {
             return (
                 <ul className="char__grid">
                     {charList.map(item => (
-                        <CharacterItem onCharSelected={this.props.onCharSelected} char={item} key={item.id} />
+                        <CharacterItem onCharSelected={onCharSelected} char={item} key={item.id} />
                     ))}
                 </ul>
             );
         }
     };
 
+    const onRequest = (offset) => {
+        onCharListLoading();
 
-    render () {
-        const {charList, loading, error , offset, newItemLoading, charListEnded} = this.state;
-        
-        const isLoading = loading ? <Spinner/> : this.renderContent(loading, charList);
-        const isNewItemsLoading = newItemLoading ? <Spinner/> : null;
-        return (
-            <div className="char__list">
-                {error ? <ErrorMessage/> : isLoading}
-                {isNewItemsLoading}
-
-                <button 
-                    className="button button__main button__long"
-                    disabled={newItemLoading}
-                    style={{display: charListEnded ? "none" : 'block'}}
-                    onClick={() => this.onRequest(offset)}
-                >
-                    <div className="inner">load more</div>
-                </button>
-            </div>
-        )
+        apiMarvel.getAllCharacters(offset)
+            .then(onUpdatedCharList)
+            .catch(onError)
     }
+
+    useEffect(() => {
+        onRequest();
+        
+        return () => {
+        };
+    }, []);
+
+    const {charList, loading, error , offset, newItemLoading, charListEnded} = state;
+    
+    const isLoading = loading ? <Spinner/> : renderContent(loading, charList);
+    const isNewItemsLoading = newItemLoading ? <Spinner/> : null;
+    
+    const handleLoadMore = () => {
+        
+        if (!charListEnded && !newItemLoading) {
+            onRequest(offset);
+        }
+    };
+
+    return (
+        <div className="char__list">
+            {error ? <ErrorMessage/> : isLoading}
+            {isNewItemsLoading}
+
+            <button 
+                className="button button__main button__long"
+                disabled={newItemLoading}
+                style={{display: charListEnded ? "none" : 'block'}}
+                onClick={handleLoadMore}
+            >
+                <div className="inner">load more</div>
+            </button>
+        </div>
+    )
 }
 
 export default CharacterList

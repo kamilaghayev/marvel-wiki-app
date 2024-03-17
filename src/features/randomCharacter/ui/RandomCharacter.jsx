@@ -1,81 +1,80 @@
-import { Component } from 'react';
-import './randomCharacter.scss';
+import { useState, useEffect } from 'react';
+
 import mjolnir from '../../../resources/img/mjolnir.png';
 import ApiMarvel from '../../../shared/api/ApiMarvel';
 import Spinner from '../../../shared/ui/spinner';
 import RandomCharView from '../../../components/randomCharView';
 import ErrorMessage from '../../../shared/ui/errorMessage';
+import './randomCharacter.scss';
 
-class RandomCharacter extends Component {
-    
-    state = {
-        char: {},
-        loading: true,
-        error: false
-    }
-    componentDidMount() {
-        this.updateCharacter()
-    }
+const beginState = {
+    char: {},
+    loading: true,
+    error: false
+}
+const RandomCharacter = () => {
+    const [ state, setState ] = useState(beginState)
 
-    apiMarvel = new ApiMarvel();
+    const apiMarvel = new ApiMarvel();
 
-    onItemLoading = () => this.setState(({loading}) => ({loading: true}));
-    onItemLoaded = () => this.setState(({loading}) => ({loading: false}));
+    const onItemLoading = () => setState(prevstate => ({...prevstate,loading: true}));
+    const onItemLoaded = () => setState(prevstate => ({...prevstate, loading: false}));
 
-    onCharLoaded = (char) => {
-        this.setState({
+    const onCharLoaded = (char) => {
+        setState(prevstate =>({
+            ...prevstate,
             char,
             loading: false,
-        })
-    }
-    
-
-    updateCharacter = () => {
-        
-        const id = Math.floor(Math.random() * (1011400 - 1011333) + 1011000);
-        this.onItemLoading();
-        this.apiMarvel
-                .getCharacter(id)
-                .then(res => {
-                    this.onCharLoaded(res)
-                    
-                })
-                .catch(err => {
-                    this.onError()
-                })
+        }))
     }
 
-    onError = () => {
-        this.setState({
+    const onError = () => {
+        setState(prevstate => ({
+            ...prevstate,
             loading: false, 
             error: true
-        })
+        }))
     }
 
-    render () {
-        const {char, loading, error } = this.state; 
+    const updateCharacter = () => {
+        const id = Math.floor(Math.random() * (1011400 - 1011333) + 1011000);
+        onItemLoading();
+        apiMarvel
+            .getCharacter(id)
+            .then(res => {onCharLoaded(res)})
+            .catch(onError)
+    }
+    
+    useEffect(() => {
+        updateCharacter()
+        
+        return () => {
+        };
+    }, []);
 
-        const isLoading = loading ? <Spinner/> : <RandomCharView character={char}/>;
-        const isError = error ? <ErrorMessage/> : isLoading;
-        return (
-            <div className="randomchar">
-                {isError}
-                <div className="randomchar__static">
-                    <p className="randomchar__title">
-                        Random character for today!<br/>
-                        Do you want to get to know him better?
-                    </p>
-                    <p className="randomchar__title">
-                        Or choose another one
-                    </p>
-                    <button onClick={this.updateCharacter} className="button button__main">
-                        <div className="inner">try it</div>
-                    </button>
-                    <img src={mjolnir} alt="mjolnir" className="randomchar__decoration"/>
-                </div>
+    const {char, loading, error } = state; 
+
+    const isLoading = loading ? <Spinner/> : <RandomCharView character={char}/>;
+    const isError = error ? <ErrorMessage/> : isLoading;
+
+    return (
+        <div className="randomchar">
+            {isError}
+            <div className="randomchar__static">
+                <p className="randomchar__title">
+                    Random character for today!<br/>
+                    Do you want to get to know him better?
+                </p>
+                <p className="randomchar__title">
+                    Or choose another one
+                </p>
+                <button onClick={updateCharacter} className="button button__main">
+                    <div className="inner">try it</div>
+                </button>
+                <img src={mjolnir} alt="mjolnir" className="randomchar__decoration"/>
             </div>
-        )
-    }
+        </div>
+    )
 }
 
 export default RandomCharacter
