@@ -15,9 +15,14 @@ const useApiMarvel = () => {
     }
 
     const getAllComics = async (offset = 0) => {
-        console.log(offset);
+        
         const res = await request(`${_apiBase}comics?limit=8&offset=${offset}&${_apiKey}`)
         return res.data.results.map(_transformComics);
+    }
+
+    const getSingleComic = async (id) => {
+        const res = await request(`${_apiBase}comics/${id}?${_apiKey}`)
+        return _transformComics(res.data.results[0])
     }
 
     const _transformCharacter = (character) => {
@@ -42,7 +47,7 @@ const useApiMarvel = () => {
 				: "No information about the number of pages",
 			thumbnail: comics.thumbnail.path + "." + comics.thumbnail.extension,
 			language: comics.textObjects[0]?.language || "en-us",
-			// optional chaining operator
+			// optional changing operator
 			price: comics.prices[0].price
 				? `${comics.prices[0].price}$`
 				: "not available",
@@ -65,7 +70,8 @@ const useApiMarvel = () => {
         clearError, 
         getAllCharacters, 
         getCharacter, 
-        getAllComics, 
+        getAllComics,
+        getSingleComic, 
         mySlice
     }
 }
