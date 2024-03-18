@@ -1,4 +1,4 @@
-import { _apiBase, _apiKey, _baseOffset } from "../constants";
+import { _apiBase, _apiKey, _baseOffset, _issueNumber } from "../constants";
 import { useHttp } from "../hooks/http.hook";
 
 const useApiMarvel = () => {
@@ -14,6 +14,12 @@ const useApiMarvel = () => {
         return _transformCharacter(res.data.results[0]);
     }
 
+    const getAllComics = async (offset = 0) => {
+        console.log(offset);
+        const res = await request(`${_apiBase}comics?limit=8&offset=${offset}&${_apiKey}`)
+        return res.data.results.map(_transformComics);
+    }
+
     const _transformCharacter = (character) => {
         return {
             id: character.id,
@@ -26,6 +32,23 @@ const useApiMarvel = () => {
         }
     }
     
+    const _transformComics = (comics) => {
+		return {
+			id: comics.id,
+			title: comics.title,
+			description: comics.description || "There is no description",
+			pageCount: comics.pageCount
+				? `${comics.pageCount} p.`
+				: "No information about the number of pages",
+			thumbnail: comics.thumbnail.path + "." + comics.thumbnail.extension,
+			language: comics.textObjects[0]?.language || "en-us",
+			// optional chaining operator
+			price: comics.prices[0].price
+				? `${comics.prices[0].price}$`
+				: "not available",
+		};
+	};
+
     const mySlice = (input, num) => {
         if (typeof input !== "string") {
             return input.slice(0, num)
@@ -36,7 +59,15 @@ const useApiMarvel = () => {
         return input;
     }
 
-    return {loading, error, clearError, getAllCharacters, getCharacter, mySlice}
+    return {
+        loading, 
+        error, 
+        clearError, 
+        getAllCharacters, 
+        getCharacter, 
+        getAllComics, 
+        mySlice
+    }
 }
 
 export default useApiMarvel;

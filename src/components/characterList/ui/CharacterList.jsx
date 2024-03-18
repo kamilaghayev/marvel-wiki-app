@@ -39,7 +39,7 @@ const CharacterList = ({onCharSelected}) => {
         initial ? setNewItemLoading(false) : setNewItemLoading(true);
 
         getAllCharacters(offset)
-        .then(onUpdatedCharList)
+            .then(onUpdatedCharList)
     }
     
     const renderContent = (charList) => {
