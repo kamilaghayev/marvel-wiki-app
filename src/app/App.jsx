@@ -1,20 +1,19 @@
+import { BrowserRouter } from "react-router-dom"
 import Header from "../components/header"
-import ComicsPage from "../pages/comicsPage/ComicsPage"
-import HomePage from "../pages/homePage"
-import SingleComicPage from "../pages/singleComicPage"
+import Routing from "../routing"
 
 const App = () => {
 
 
     return (
-        <div className="app">
-            <Header/>
-            <main>
-                <HomePage/>
-                <ComicsPage/>
-                <SingleComicPage/>
-            </main>
-        </div>
+        <BrowserRouter>
+            <div className="app">
+                <Header/>
+                <main>
+                    <Routing/>
+                </main>
+            </div>
+        </BrowserRouter>
     )
 }
 
