@@ -4,13 +4,13 @@ import Spinner from '../../../shared/ui/spinner';
 import ErrorMessage from '../../../shared/ui/errorMessage';
 
 import './singleComic.scss';
+import { useParams } from 'react-router-dom';
 
 const SingleComic = () => {
     const [comic , setComic] = useState(null);
     const {loading, error, getSingleComic} = useApiMarvel();
     
-    const comicId = 23356;
-
+    const comicId = useParams().id;
     useEffect(() => {
         onRequest(comicId)
     }, []);
