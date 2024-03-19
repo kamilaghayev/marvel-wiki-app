@@ -1,3 +1,5 @@
+import { NavLink } from "react-router-dom";
+import { getIdFromUrl } from "../../../shared/utils";
 
 
 const CharacterInfoView = ({char}) => {
@@ -9,10 +11,16 @@ const CharacterInfoView = ({char}) => {
 
     const renderComics = (comics) => {
         return comics.map((item, i) => {
+            const comicId = getIdFromUrl(item.resourceURI)
+
             return (
-                <li key={i} className="char__comics-item">
+                <NavLink 
+                    key={i} 
+                    to={`/comics/${comicId}`}
+                    className="char__comics-item"
+                >
                     {item.name}
-                </li>
+                </NavLink>
             )
         })
     }

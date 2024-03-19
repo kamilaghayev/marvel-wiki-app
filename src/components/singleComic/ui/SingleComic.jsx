@@ -4,7 +4,7 @@ import Spinner from '../../../shared/ui/spinner';
 import ErrorMessage from '../../../shared/ui/errorMessage';
 
 import './singleComic.scss';
-import { useParams } from 'react-router-dom';
+import { NavLink, useNavigate, useParams } from 'react-router-dom';
 
 const SingleComic = () => {
     const [comic , setComic] = useState(null);
@@ -34,9 +34,12 @@ const SingleComic = () => {
 }
 
 const SingleComicView = ({comic}) => {
-    console.log(comic);
     const {title, description, thumbnail, price, language, pageCount}= comic;
 
+    const navigate = useNavigate()
+    const goBack = () => {
+        navigate(-1)
+    }
     return (
         <>
             <img src={thumbnail} alt={title} className="single-comic__img"/>
@@ -47,7 +50,7 @@ const SingleComicView = ({comic}) => {
                 <p className="single-comic__descr">Language: {language}</p>
                 <div className="single-comic__price">{price}</div>
             </div>
-            <a href="#" className="single-comic__back">Back to all</a>
+            <a onClick={goBack} className="single-comic__back">Back to all</a>
         </>
     )
 }

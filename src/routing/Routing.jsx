@@ -1,8 +1,11 @@
+import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
-import HomePage from "../pages/homePage";
-import ComicsPage from "../pages/comicsPage/ComicsPage";
-import SingleComicPage from "../pages/singleComicPage";
-import Page404 from "../pages/page404";
+
+import Spinner from "../shared/ui/spinner";
+const HomePage = lazy(() =>  import("../pages/homePage"));
+const ComicsPage = lazy(() => import("../pages/comicsPage/ComicsPage"));
+const SingleComicPage= lazy(() => import("../pages/singleComicPage"));
+const Page404 = lazy(() => import("../pages/page404"));
 
 const routeConfig = [
     {
@@ -28,15 +31,17 @@ const routeConfig = [
 ]
 const Routing = () => {
     return (
-        <Routes>
-            {routeConfig.map((item, i) => {
-                return <Route 
-                    key={i}
-                    path={item.path}
-                    element={item.element}
-                />
-            })}
-        </Routes>
+        <Suspense fallback={<Spinner/>}>
+            <Routes>
+                {routeConfig.map((item, i) => {
+                    return <Route 
+                        key={i}
+                        path={item.path}
+                        element={item.element}
+                    />
+                })}
+            </Routes>
+        </Suspense>
     );
 }
 
