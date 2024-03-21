@@ -13,7 +13,10 @@ const useApiMarvel = () => {
         const res = await request(`${_apiBase}characters/${id}?${_apiKey}`);
         return _transformCharacter(res.data.results[0]);
     }
-
+    const getCharacterFromName = async (name) => {
+        const res = await request(`${_apiBase}characters?nameStartsWith=${name}&${_apiKey}`);
+        return _transformCharacter(res.data.results[0]);
+    }
     const getAllComics = async (offset = 0) => {
         
         const res = await request(`${_apiBase}comics?limit=8&offset=${offset}&${_apiKey}`)
@@ -69,7 +72,8 @@ const useApiMarvel = () => {
         error, 
         clearError, 
         getAllCharacters, 
-        getCharacter, 
+        getCharacter,
+        getCharacterFromName,
         getAllComics,
         getSingleComic, 
         mySlice

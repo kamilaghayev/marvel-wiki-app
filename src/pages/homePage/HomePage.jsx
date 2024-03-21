@@ -3,6 +3,7 @@ import CharacterInfo from "../../components/characterInfo"
 import CharacterList from "../../components/characterList"
 import RandomCharacter from "../../features/randomCharacter"
 import ErrorBoundary from "../../shared/errorBoundary"
+import SearchCharForm from "../../components/searchCharForm"
 
 const HomePage = () => {
     const [selectedChar, setState] = useState(null)
@@ -22,6 +23,9 @@ const HomePage = () => {
                 </ErrorBoundary>
                 <ErrorBoundary>
                     <CharacterInfo charId={selectedChar}/>
+                </ErrorBoundary>
+                <ErrorBoundary>
+                    <SearchCharForm/>
                 </ErrorBoundary>
             </div>
         </>
