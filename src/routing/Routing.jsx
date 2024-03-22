@@ -2,6 +2,8 @@ import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 
 import Spinner from "../shared/ui/spinner";
+
+const SingleCharPage = lazy(() => import("../pages/singleCharPage/ui/SingleCharPage"));
 const HomePage = lazy(() =>  import("../pages/homePage"));
 const ComicsPage = lazy(() => import("../pages/comicsPage/ComicsPage"));
 const SingleComicPage= lazy(() => import("../pages/singleComicPage"));
@@ -22,6 +24,11 @@ const routeConfig = [
         path: "/comics/:id",
         exact: true,
         element: <SingleComicPage/>
+    },
+    {
+        path: "/characters/:id",
+        exact: true,
+        element: <SingleCharPage/>
     },
     {
         path: "*",

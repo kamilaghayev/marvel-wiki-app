@@ -21,12 +21,14 @@ const HomePage = () => {
                 <ErrorBoundary>
                     <CharacterList onCharSelected={onCharSelected}/>
                 </ErrorBoundary>
-                <ErrorBoundary>
-                    <CharacterInfo charId={selectedChar}/>
-                </ErrorBoundary>
-                <ErrorBoundary>
-                    <SearchCharForm/>
-                </ErrorBoundary>
+                <div>
+                    <ErrorBoundary>
+                        <CharacterInfo charId={selectedChar}/>
+                    </ErrorBoundary>
+                    <ErrorBoundary>
+                        <SearchCharForm/>
+                    </ErrorBoundary>
+                </div>
             </div>
         </>
     )
