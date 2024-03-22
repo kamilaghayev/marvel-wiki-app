@@ -1,16 +1,14 @@
 import { useState, useEffect } from 'react';
 import useApiMarvel from '../../../shared/api/ApiMarvel';
+import { setContent } from '../../../shared/utils/setContent';
 import CharacterInfoView from '../../characterInfoView';
-import Skeleton from '../../skeleton';
 
-import ErrorMessage from '../../../shared/ui/errorMessage';
-import Spinner from '../../../shared/ui/spinner';
 import './characterInfo.scss';
 
 const CharacterInfo = ({charId}) => {
     
     const [ char, setChar ] = useState(null)
-    const {loading, error, clearError, getCharacter} = useApiMarvel();
+    const {process, setProcess, clearError, getCharacter} = useApiMarvel();
     
 
 
@@ -26,6 +24,7 @@ const CharacterInfo = ({charId}) => {
         
         getCharacter(charId)
             .then(onCharLoaded)
+            .then(() => setProcess('success'))
     }
 
     useEffect(() => {
@@ -34,18 +33,10 @@ const CharacterInfo = ({charId}) => {
     }, [charId]);
 
 
-
-    const skeleton = char || error || loading ? null :  <Skeleton/>;
-    const errorMessage = error ? <ErrorMessage/> : null;
-    const loader = loading ? <Spinner/> : null;
-    const content = !(loading || error || !char) ? <CharacterInfoView char={char}/> : null;
     
     return (
         <>
-            {skeleton}
-            {errorMessage}
-            {loader}
-            {content}
+            {setContent(process, CharacterInfoView, char, {skeleton: true})}
         </>
     )
 }

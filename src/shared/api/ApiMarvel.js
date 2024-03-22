@@ -2,7 +2,7 @@ import { _apiBase, _apiKey, _baseOffset, _issueNumber } from "../constants";
 import { useHttp } from "../hooks/http.hook";
 
 const useApiMarvel = () => {
-    const {loading, error, request, clearError} = useHttp();
+    const {loading, error, process, setProcess, request, clearError} = useHttp();
 
     const getAllCharacters = async (offset = _baseOffset) => {
         const res = await request(`${_apiBase}characters?limit=9&offset=${offset}&${_apiKey}`);
@@ -69,7 +69,9 @@ const useApiMarvel = () => {
 
     return {
         loading, 
-        error, 
+        error,
+        process,
+        setProcess,
         clearError, 
         getAllCharacters, 
         getCharacter,

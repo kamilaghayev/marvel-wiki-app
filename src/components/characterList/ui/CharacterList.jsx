@@ -1,11 +1,10 @@
-import './characterList.scss';
+import { useEffect, useState } from 'react';
+import { _baseOffset } from '../../../shared/constants';
+import { setContent } from '../../../shared/utils/setContent';
 import useApiMarvel from '../../../shared/api/ApiMarvel';
 import CharacterItem from '../../characterItem';
-import Spinner from '../../../shared/ui/spinner';
-import ErrorMessage from '../../../shared/ui/errorMessage';
-import { _baseOffset } from '../../../shared/constants';
-import { useEffect, useState } from 'react';
 
+import './characterList.scss';
 
 
 const CharacterList = ({onCharSelected}) => {
@@ -13,15 +12,14 @@ const CharacterList = ({onCharSelected}) => {
     const [newItemLoading, setNewItemLoading] = useState(false);
     const [offset, setOffset] = useState(_baseOffset);
     const [charListEnded, setCharListEnded] = useState(false);
-    const {loading, error, clearError, getAllCharacters} = useApiMarvel();
+    const {process, setProcess, clearError, getAllCharacters} = useApiMarvel();
     
 
     
     useEffect(() => {
         onRequest(offset, true);
         
-        return () => {
-        };
+        
     }, []);
 
     const onUpdatedCharList = (newCharList) => {
@@ -40,19 +38,9 @@ const CharacterList = ({onCharSelected}) => {
 
         getAllCharacters(offset)
             .then(onUpdatedCharList)
+            .then(() => setProcess('success'))
     }
     
-    const renderContent = (charList) => {
-        return (
-            <ul className="char__grid">
-                {charList.map(item => (
-                    <CharacterItem onCharSelected={onCharSelected} char={item} key={item.id} />
-                ))}
-            </ul>
-        );
-    }
-    
-    const isLoading = loading && !newItemLoading ? <Spinner/> : renderContent(charList);
     
     const handleLoadMore = () => {
         
@@ -63,8 +51,7 @@ const CharacterList = ({onCharSelected}) => {
 
     return (
         <div className="char__list">
-            {error ? <ErrorMessage/> : isLoading}
-            {isLoading}
+            {setContent(process, RenderContent, charList, {onCharSelected})}
 
             <button 
                 className="button button__main button__long"
@@ -78,4 +65,13 @@ const CharacterList = ({onCharSelected}) => {
     )
 }
 
+const RenderContent = ({data, onCharSelected}) => {
+    return (
+        <ul className="char__grid">
+            {data.map(item => (
+                <CharacterItem onCharSelected={onCharSelected} char={item} key={item.id} />
+            ))}
+        </ul>
+    );
+}
 export default CharacterList

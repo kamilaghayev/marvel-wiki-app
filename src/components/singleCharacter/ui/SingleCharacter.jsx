@@ -2,15 +2,16 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
 import useApiMarvel from '../../../shared/api/ApiMarvel';
 
-import Spinner from '../../../shared/ui/spinner';
-import ErrorMessage from '../../../shared/ui/errorMessage';
-import "./singleCharacter.scss";
 import { Helmet } from 'react-helmet';
+import "./singleCharacter.scss";
+import { setContent } from '../../../shared/utils/setContent';
 
 const SingleCharacter = () => {
     const [char, setChar] = useState(null);
-    const {loading, error, clearError, getCharacter} = useApiMarvel()
-    const charId = useParams().id
+    const {process, setProcess, clearError, getCharacter} = useApiMarvel();
+
+    const charId = useParams().id;
+
     useEffect(() => {
         onRequestChar(charId)
     }, [charId]);
@@ -20,24 +21,21 @@ const SingleCharacter = () => {
 
         getCharacter(id)
             .then(CharLoaded)
+            .then(() => setProcess('success'))
     }
     const CharLoaded = (res) => {
         setChar(res)
     }
-    const isLoading = loading ? <Spinner/> : null;
-    const isError = error ? <ErrorMessage/> : null;
     return (
         <>
-            {char && <SingleCharacterView char={char}/>}
-            {isError}
-            {isLoading}
+            {setContent(process, SingleCharacterView, char)}
         </>
     )
 }
 
-const SingleCharacterView = ({char}) => {
+const SingleCharacterView = ({data}) => {
 
-    const {name, thumbnail, description} = char;
+    const {name, thumbnail, description} = data;
 
     return (
         <div className="single-comic">

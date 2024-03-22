@@ -1,15 +1,14 @@
 import { useEffect, useState } from 'react';
 import useApiMarvel from '../../../shared/api/ApiMarvel';
-import Spinner from '../../../shared/ui/spinner';
-import ErrorMessage from '../../../shared/ui/errorMessage';
 
 import './singleComic.scss';
-import { NavLink, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+import { setContent } from '../../../shared/utils/setContent';
 
 const SingleComic = () => {
     const [comic , setComic] = useState(null);
-    const {loading, error, getSingleComic} = useApiMarvel();
+    const {process, setProcess, getSingleComic} = useApiMarvel();
     
     const comicId = useParams().id;
     useEffect(() => {
@@ -19,23 +18,22 @@ const SingleComic = () => {
     const onRequest = (id) => {
         getSingleComic(id)
             .then(characterLoaded)
+            .then(() => setProcess('success'))
     }
 
     const characterLoaded = (res) => {
         setComic(res)
     }
 
-    const isLoading = loading ? <Spinner/> : (comic && <SingleComicView comic={comic}/>);
-
     return (
         <div className="single-comic">
-            {error ? <ErrorMessage/> : isLoading}
+            {setContent(process, SingleComicView, comic)}
         </div>
     )
 }
 
-const SingleComicView = ({comic}) => {
-    const {title, description, thumbnail, price, language, pageCount}= comic;
+const SingleComicView = ({data}) => {
+    const {title, description, thumbnail, price, language, pageCount}= data;
 
     const navigate = useNavigate()
     const goBack = () => {

@@ -2,8 +2,8 @@ import { NavLink } from "react-router-dom";
 import { getIdFromUrl } from "../../../shared/utils";
 
 
-const CharacterInfoView = ({char}) => {
-    const {name, thumbnail, description, homepage, wiki, comics} = char;
+const CharacterInfoView = ({data}) => {
+    const {name, thumbnail, description, homepage, wiki, comics} = data;
     const comicsIsLarge = comics.length > 10 ? comics.slice(0, 10) : comics;
 
     const notFoundImage ='http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg';

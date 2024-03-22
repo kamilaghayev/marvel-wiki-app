@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import useApiMarvel from '../../../shared/api/ApiMarvel';
-import ErrorMessage from '../../../shared/ui/errorMessage';
-import Spinner from '../../../shared/ui/spinner';
 import ComicsListItems from '../../comicsListItems';
+import { setContent } from '../../../shared/utils/setContent';
 import './comicsList.scss';
 
 const ComicsList = () => {
@@ -10,7 +9,7 @@ const ComicsList = () => {
     const [offset, setOffset] = useState(0);
     const [newItemLoad, setNewItemLoad] = useState(false);
     const [comicsListEnded, setComicsListEnded] = useState(false);
-    const {loading, error, getAllComics} = useApiMarvel();
+    const {process, setProcess, getAllComics} = useApiMarvel();
 
     useEffect(() => {
         onRequest(offset, true)
@@ -20,6 +19,7 @@ const ComicsList = () => {
         initial ? setNewItemLoad(false) : setNewItemLoad(true);
         getAllComics(offset)
             .then(comicsLoaded)
+            .then(() => setProcess('success'))
     }
 
     const comicsLoaded = (newComics) => {
@@ -30,15 +30,13 @@ const ComicsList = () => {
         setOffset(prevOffset => prevOffset + 8);
     }
 
-    const isLoading = loading && !newItemLoad;
-    const isError = error ? <ErrorMessage/> : isLoading;
     const isListEnded = {'display' : comicsListEnded ? 'none' : 'block'};
 
+    
     return (
         <div className="comics__list">
             <ul className="comics__grid">
-                {isError}
-                {isLoading ? <Spinner/> : <RenderList comics={comics}/>}
+                {setContent(process, RenderList, comics)}
             </ul>
             <button 
                 className="button button__main button__long"
@@ -52,8 +50,8 @@ const ComicsList = () => {
     )
 }
 
-const RenderList = ({comics}) => {
+export const RenderList = ({data}) => {
     
-    return comics.map(comic => <ComicsListItems key={comic.id} comic={comic}/>) 
+    return data.map(comic => <ComicsListItems key={comic.id} comic={comic}/>) 
 }
 export default ComicsList
