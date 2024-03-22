@@ -5,6 +5,7 @@ import useApiMarvel from '../../../shared/api/ApiMarvel';
 import Spinner from '../../../shared/ui/spinner';
 import ErrorMessage from '../../../shared/ui/errorMessage';
 import "./singleCharacter.scss";
+import { Helmet } from 'react-helmet';
 
 const SingleCharacter = () => {
     const [char, setChar] = useState(null);
@@ -40,6 +41,14 @@ const SingleCharacterView = ({char}) => {
 
     return (
         <div className="single-comic">
+            <Helmet>
+                <meta
+                    name={`marvel ${name} page`}
+                    content={`page with marvel ${name} character`}
+                />
+                <title>{name}</title>
+            </Helmet>
+
             <img src={thumbnail} alt={name} className="single-comic__char-img"/>
             <div className="single-comic__info">
                 <h2 className="single-comic__name">{name}</h2>

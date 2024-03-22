@@ -5,6 +5,7 @@ import ErrorMessage from '../../../shared/ui/errorMessage';
 
 import './singleComic.scss';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 
 const SingleComic = () => {
     const [comic , setComic] = useState(null);
@@ -42,6 +43,14 @@ const SingleComicView = ({comic}) => {
     }
     return (
         <>
+            <Helmet>
+                <meta
+                    name="marvel comics page"
+                    content={`page with ${title} comic`}
+                />
+                <title>{title}</title>
+            </Helmet>
+            
             <img src={thumbnail} alt={title} className="single-comic__img"/>
             <div className="single-comic__info">
                 <h2 className="single-comic__name">{title}</h2>
